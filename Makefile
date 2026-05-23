@@ -1,24 +1,24 @@
 install:
-	poetry install
+	uv sync --install --force
 
 build:
 	./build.sh
 
 publish:
-	poetry publish --dry-run
+	uv publish --dry-run
 
 package-install:
 	python -m pip install --user dist/*.whl
 
 lint:
-	poetry run flake8 page_analyzer
+	uv run flake8 page_analyzer
 
 dev:
-	poetry run flask --debug --app page_analyzer:app run
+	uv run flask --debug --app page_analyzer:app run
 
 PORT ?= 8000
 start:
-	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+	uv run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
 
 render-start:
 	gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
