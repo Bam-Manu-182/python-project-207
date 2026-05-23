@@ -529,6 +529,21 @@ files = [
 ]
 
 [[package]]
+name = "validators"
+version = "0.35.0"
+description = "Python Data Validation for Humans™"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "validators-0.35.0-py3-none-any.whl", hash = "sha256:e8c947097eae7892cb3d26868d637f79f47b4a0554bc6b80065dfe5aac3705dd"},
+    {file = "validators-0.35.0.tar.gz", hash = "sha256:992d6c48a4e77c81f1b4daba10d16c3a9bb0dbb79b3a19ea847ff0928e70497a"},
+]
+
+[package.extras]
+crypto-eth-addresses = ["eth-hash[pycryptodome] (>=0.7.0)"]
+
+[[package]]
 name = "werkzeug"
 version = "3.1.8"
 description = "The comprehensive WSGI web application library."
@@ -549,4 +564,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "771ddf52cc5ecfd9fd5762d2f01bab411c168f63e4ac7b6188f3f3ebb424b42d"
+content-hash = "f28952b690b0d36c034d7bbde68b952f52905006676932b07b792e1214c88876"
