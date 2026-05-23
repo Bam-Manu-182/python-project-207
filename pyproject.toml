@@ -2,7 +2,7 @@
 name = "hexlet-code"
 version = "0.1.0"
 description = "Analizador de páginas web - Proyecto de aprendizaje"
-authors = [Manuel Parada]
+authors = ["Manuel Parada"]
 packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
