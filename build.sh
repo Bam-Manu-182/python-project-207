@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-uv install --no-root
+set -o errexit
 
-curl -LsSf https://astral.sh/uv/install.sh | sh
-source $HOME/.local/bin/env
-make install
-
-chmod +x ./build.sh
+poetry install --no-interaction --no-root
