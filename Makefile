@@ -1,8 +1,14 @@
 install:
-	uv sync
+	poetry install
 
 build:
 	./build.sh
 
-render-start:
-	gunicorn -w 5 -b 0.0.0:$(PORT) page_analyzer:app
+publish:
+	poetry publish --dry-run
+
+package-install:
+	python -m pip install --user dist/*.whl
+
+lint:
+	poetry run flake8 page_analyzer
