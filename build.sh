@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-poetry install
+poetry install --no-root
