@@ -1,22 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
 import os
-import psycopg2
+import requests
+from flask import Flask, render_template, request, redirect, url_for, flash
+from psycopg2 import connect
 from psycopg2.extras import NamedTupleCursor
-from urllib.parse import urlparse
-import validators
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev_secret_key_default')
-DATABASE_URL = os.getenv('DATABASE_URL')
+app.secret_key = os.getenv('SECRET_KEY', 'secret_key_por_defecto')
 
 
 def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
+    database_url = os.getenv('DATABASE_URL')
+    return connect(database_url)
 
 
 @app.route('/')
@@ -24,40 +22,56 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/urls', methods=['POST'])
-def add_url():
-    url_input = request.form.get('url')
+@app.route('/urls', methods=['GET'])
+def get_urls():
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
+        curr.execute('''
+            SELECT DISTINCT ON (urls.id)
+                urls.id,
+                urls.name,
+                url_checks.created_at as last_check,
+                url_checks.status_code
+            FROM urls
+            LEFT JOIN url_checks ON urls.id = url_checks.url_id
+            ORDER BY urls.id DESC, url_checks.id DESC;
+        ''')
+        urls_data = curr.fetchall()
+    conn.close()
+    return render_template('urls/index.html', urls=urls_data)
 
-    if not validators.url(url_input) or len(url_input) > 255:
+
+@app.route('/urls', methods=['POST'])
+def post_url():
+    url_form = request.form.get('url')
+
+    if not url_form:
         flash('URL incorrecta', 'danger')
         return render_template('index.html'), 422
 
-    parsed_url = urlparse(url_input)
-    normalized_name = f"{parsed_url.scheme}://{parsed_url.netloc}"
-
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
-        curr.execute('SELECT id FROM urls WHERE name = %s;', (normalized_name,))
+        curr.execute('SELECT id FROM urls WHERE name = %s;', (url_form,))
         existing_url = curr.fetchone()
 
         if existing_url:
             flash('La página ya existe', 'info')
-            url_id = existing_url.id
-        else:
-            curr.execute(
-                'INSERT INTO urls (name) VALUES (%s) RETURNING id;',
-                (normalized_name,)
-            )
-            url_id = curr.fetchone().id
-            conn.commit()
-            flash('Página añadida con éxito', 'success')
+            conn.close()
+            return redirect(url_for('get_url_detail', id=existing_url.id))
 
+        curr.execute(
+            'INSERT INTO urls (name) VALUES (%s) RETURNING id;',
+            (url_form,)
+        )
+        new_id = curr.fetchone().id
+        conn.commit()
     conn.close()
 
-    return redirect(url_for('get_url_detail', id=url_id))
+    flash('Página añadida con éxito', 'success')
+    return redirect(url_for('get_url_detail', id=new_id))
 
 
-@app.route('/urls/<int:id>')
+@app.route('/urls/<int:id>', methods=['GET'])
 def get_url_detail(id):
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
@@ -68,42 +82,50 @@ def get_url_detail(id):
             conn.close()
             return "Página no encontrada", 404
 
-        curr.execute('SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC;', (id,))
+        curr.execute(
+            'SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC;',
+            (id,)
+        )
         checks = curr.fetchall()
     conn.close()
 
-    if not url_data:
-            conn.close()
-            return "Página no encontrada", 404
-
     return render_template('urls/show.html', url=url_data, checks=checks)
-
-
-@app.route('/urls')
-def get_urls():
-    conn = get_db_connection()
-    with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
-        query = """
-            SELECT urls.id, urls.name, MAX(urls_checks.created_at) AS last_check
-            FROM urls
-            LEFT JOIN url_checks ON urls.id = urls_checks.url_id
-            GROUP BY urls.id,
-            ORDER BY urls.id DESC;
-        """
-        curr.execute(query)
-        urls = curr.fetchall()
-    conn.close()
-    return render_template('urls/index.html', urls=urls)
 
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def check_url(id):
     conn = get_db_connection()
+    url_data = None
+
     with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
-        curr.execute('INSERT INTO url_checks (url_id) VALUES (%s);', (id,))
-        conn.commit()
-    conn.close()
-    flash('Página verificada con éxito', 'success')
+        curr.execute('SELECT name FROM urls WHERE id = %s;', (id,))
+        url_data = curr.fetchone()
+
+    if not url_data:
+        conn.close()
+        flash('Ocurrió un error al hacer la verificación.', 'danger')
+        return redirect(url_for('get_urls'))
+
+    try:
+        response = requests.get(url_data.name, timeout=5)
+        response.raise_for_status()
+        status_code = response.status_code
+
+        with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
+            curr.execute(
+                'INSERT INTO url_checks (url_id, status_code) VALUES (%s, %s);',
+                (id, status_code)
+            )
+            conn.commit()
+
+        flash('Página verificada con éxito', 'success')
+
+    except requests.RequestException:
+        flash('Ocurrió un error al hacer la verificación.', 'danger')
+
+    finally:
+        conn.close()
+
     return redirect(url_for('get_url_detail', id=id))
 
 

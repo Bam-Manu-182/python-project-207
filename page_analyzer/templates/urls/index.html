@@ -41,6 +41,7 @@
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Última verificación</th>
+                            <th>Código de estado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,10 +56,13 @@
                             <td>
                                 {{ url.last_check.strftime('%Y-%m-%d %H:%M:%S') if url.last_check else '' }}
                             </td>
+                            <td>
+                                {{ url.status_code if url.status_code is not none else '' }}
+                            </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="3" class="text-center text-muted py-4">No hay páginas registradas en el sistema.</td>
+                            <td colspan="4" class="text-center text-muted py-4">No hay páginas registradas en el sistema.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -78,11 +78,11 @@
                         {% for check in checks %}
                         <tr>
                             <td>{{ check.id }}</td>
-                            <td>{{ check.status_code or '' }}</td>
-                            <td>{{ check.h1 or '' }}</td>
-                            <td>{{ check.title or '' }}</td>
-                            <td>{{ check.description or '' }}</td>
-                            <td>{{ check.created_at.strftime('%Y-%m-%d %H:%M:%S') if check.created_at else '' }}</td>
+                            <td>{{ check.status_code if check.status_code is not none else '' }}</td>
+                            <td>{{ check.h1 if check.h1 is not none else '' }}</td>
+                            <td>{{ check.title if check.title is not none else '' }}</td>
+                            <td>{{ check.description if check.description is not none else '' }}</td>
+                            <td>{{ check.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                         </tr>
                         {% else %}
                         <tr>

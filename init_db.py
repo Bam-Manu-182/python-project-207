@@ -1,9 +1,10 @@
 import os
 import psycopg2
+from psycopg2.extras import NamedTupleCursor
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 
 def init_database():
     database_url = os.getenv('DATABASE_URL')
@@ -14,7 +15,7 @@ def init_database():
             sql_script = f.read()
 
         conn = psycopg2.connect(database_url)
-        with conn.cursor() as curr:
+        with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
             curr.execute(sql_script)
             conn.commit()
         conn.close()
