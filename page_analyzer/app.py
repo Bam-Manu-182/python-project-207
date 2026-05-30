@@ -63,22 +63,48 @@ def get_url_detail(id):
     with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
         curr.execute('SELECT * FROM urls WHERE id = %s;', (id,))
         url_data = curr.fetchone()
+
+        if not url_data:
+            conn.close()
+            return "Página no encontrada", 404
+
+        curr.execute('SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC;', (id,))
+        checks = curr.fetchall()
     conn.close()
 
     if not url_data:
-        return "Página no encontrada", 404
+            conn.close()
+            return "Página no encontrada", 404
 
-    return render_template('urls/show.html', url=url_data)
+    return render_template('urls/show.html', url=url_data, checks=checks)
 
 
 @app.route('/urls')
 def get_urls():
     conn = get_db_connection()
     with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
-        curr.execute('SELECT * FROM urls ORDER BY id DESC;')
+        query = """
+            SELECT urls.id, urls.name, MAX(urls_checks.created_at) AS last_check
+            FROM urls
+            LEFT JOIN url_checks ON urls.id = urls_checks.url_id
+            GROUP BY urls.id,
+            ORDER BY urls.id DESC;
+        """
+        curr.execute(query)
         urls = curr.fetchall()
     conn.close()
     return render_template('urls/index.html', urls=urls)
+
+
+@app.route('/urls/<int:id>/checks', methods=['POST'])
+def check_url(id):
+    conn = get_db_connection()
+    with conn.cursor(cursor_factory=NamedTupleCursor) as curr:
+        curr.execute('INSERT INTO url_checks (url_id) VALUES (%s);', (id,))
+        conn.commit()
+    conn.close()
+    flash('Página verificada con éxito', 'success')
+    return redirect(url_for('get_url_detail', id=id))
 
 
 if __name__ == '__main__':

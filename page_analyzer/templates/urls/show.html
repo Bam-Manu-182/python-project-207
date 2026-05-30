@@ -1,48 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Detalle de la Página</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Páginas - Detalle del Sitio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body class="bg-light">
-    <div class="container mt-5">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-lg">
+            <a class="navbar-brand fw-bold" href="/">Analizador de Páginas</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Inicio</a>
+                <a class="nav-link active" href="/urls">Sitios</a>
             </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+        </div>
+    </nav>
 
-      <h1 class="mb-4">Página: {{ url.name }}</h1>
+    <main class="container-lg my-5 flex-grow-1">
 
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped" data-test="url">
-          <tbody>
-            <tr>
-              <th class="w-25 table-dark">ID</th>
-              <td>{{ url.id }}</td>
-            </tr>
-            <tr>
-              <th class="table-dark">Nombre</th>
-              <td>{{ url.name }}</td>
-            </tr>
-            <tr>
-              <th class="table-dark">Fecha de creación</th>
-              <td>{{ url.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-      <a href="{{ url_for('get_urls') }}" class="btn btn-outline-secondary mt-3">Volver al listado</a>
-    </div>
+        <div class="card shadow-sm p-4 mb-4 bg-white rounded">
+            <h1 class="mb-4 text-secondary">Sitio: {{ url.name }}</h1>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle m-0">
+                    <tbody class="table-group-divider">
+                        <tr>
+                            <td class="fw-bold bg-light" style="width: 25%;">ID</td>
+                            <td>{{ url.id }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">Nombre</td>
+                            <td>{{ url.name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">Fecha de creación</td>
+                            <td>{{ url.created_at.strftime('%Y-%m-%d %H:%M:%S') if url.created_at else '' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-5">
+            <form action="{{ url_for('check_url', id=url.id) }}" method="post">
+                <button type="submit" class="btn btn-primary btn-lg shadow-sm">Iniciar verificación</button>
+            </form>
+        </div>
+
+        <div class="card shadow-sm p-4 bg-white rounded">
+            <h2 class="mb-4 text-secondary">Verificaciones</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle" data-test="checks">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Código de Estado</th>
+                            <th>H1</th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Fecha de Creación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for check in checks %}
+                        <tr>
+                            <td>{{ check.id }}</td>
+                            <td>{{ check.status_code or '' }}</td>
+                            <td>{{ check.h1 or '' }}</td>
+                            <td>{{ check.title or '' }}</td>
+                            <td>{{ check.description or '' }}</td>
+                            <td>{{ check.created_at.strftime('%Y-%m-%d %H:%M:%S') if check.created_at else '' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No hay verificaciones registradas aún.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('get_urls') }}" class="btn btn-outline-secondary">Volver al listado</a>
+        </div>
+
+    </main>
+
+    <footer class="border-top py-3 bg-white mt-auto text-center text-muted">
+        <div class="container-lg">
+            <small>&copy; 2026 Analizador de Páginas</small>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
