@@ -10,3 +10,8 @@ dependencies = [
     "requests",
     "beautifulsoup4"
 ]
+
+[dependency-groups]
+dev = [
+    "flake8"
+]
