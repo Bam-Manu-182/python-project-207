@@ -1,0 +1,12 @@
+[project]
+name = "hexlet-code"
+version = "0.1.0"
+description = "Page Analyzer project for Manuel Parada"
+dependencies = [
+    "flask",
+    "gunicorn",
+    "python-dotenv",
+    "psycopg2-binary",
+    "requests",
+    "beautifulsoup4"
+]
