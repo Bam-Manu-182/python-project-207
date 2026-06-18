@@ -2,12 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Analizador de Páginas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">¡Hola desde Flask!</h1>
-    </div>
+
+    {% for message in get_flashed_messages() %}
+        <p style="color: blue;">{{ message }}</p>
+    {% endfor %}
+
+    <h1>Analizador de Páginas</h1>
+
+    <form action="/urls" method="POST">
+        <input type="text" name="url" placeholder="https://www.ejemplo.com" required>
+        <button type="submit">Chequear</button>
+    </form>
+
 </body>
 </html>
