@@ -7,9 +7,13 @@
 </head>
 <body>
 
-    <h1>Detalles de la URL</h1>
+    {% for message in get_flashed_messages() %}
+        <p style="color: blue;">{{ message }}</p>
+    {% endfor %}
 
-    <table data-test="url" border="1">
+    <h1>Sitio: {{ url[1] }}</h1>
+
+    <table border="1">
         <tbody>
             <tr>
                 <th>ID</th>
@@ -27,7 +31,40 @@
     </table>
 
     <br>
-    <a href="/">Volver al inicio</a>
+    <h2>Chequeos</h2>
+
+    <form action="/urls/{{ url[0] }}/checks" method="POST">
+        <button type="submit">Iniciar chequeo</button>
+    </form>
+
+    <br>
+    <table data-test="checks" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código de Estado</th>
+                <th>H1</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Fecha de creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for check in checks %}
+            <tr>
+                <td>{{ check[0] }}</td>
+                <td>{{ check[2] or '' }}</td>
+                <td>{{ check[3] or '' }}</td>
+                <td>{{ check[4] or '' }}</td>
+                <td>{{ check[5] or '' }}</td>
+                <td>{{ check[6] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/urls">Volver a la lista</a>
 
 </body>
 </html>

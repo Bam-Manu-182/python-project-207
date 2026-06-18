@@ -60,9 +60,16 @@ def show_url(id):
     repo.execute("SELECT id, name, created_at FROM urls WHERE id = %s;", (id,))
     url = repo.fetchone()
 
+    repo.execute(
+        "SELECT id, url_id, status_code, h1, title, description, created_at "
+        "FROM url_checks WHERE url_id = %s ORDER BY id DESC;",
+        (id,)
+    )
+    checks = repo.fetchall()
+
     repo.close()
     conn.close()
-    return render_template('show.html', url=url)
+    return render_template('show.html', url=url, checks=checks)
 
 
 @app.route('/urls')
@@ -70,9 +77,31 @@ def list_urls():
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     repo = conn.cursor()
 
-    repo.execute("SELECT id, name, created_at FROM urls ORDER BY id DESC;")
+    repo.execute(
+        "SELECT urls.id, urls.name, urls.created_at, "
+        "MAX(url_checks.created_at) AS last_check "
+        "FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id "
+        "GROUP BY urls.id ORDER BY urls.id DESC;"
+    )
     urls = repo.fetchall()
 
     repo.close()
     conn.close()
     return render_template('urls.html', urls=urls)
+
+
+@app.route('/urls/<int:id>/checks', methods=['POST'])
+def add_check(id):
+    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+    repo = conn.cursor()
+
+    repo.execute(
+        "INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s);",
+        (id, datetime.now())
+    )
+    conn.commit()
+
+    repo.close()
+    conn.close()
+    flash('Página verificada con éxito')
+    return redirect(url_for('show_url', id=id))

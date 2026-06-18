@@ -14,7 +14,8 @@
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Fecha</th>
+                <th>Fecha de creación</th>
+                <th>Último chequeo</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
                 <td>{{ url[0] }}</td>
                 <td><a href="/urls/{{ url[0] }}">{{ url[1] }}</a></td>
                 <td>{{ url[2] }}</td>
+                <td>{{ url[3] or '' }}</td>
             </tr>
             {% endfor %}
         </tbody>
