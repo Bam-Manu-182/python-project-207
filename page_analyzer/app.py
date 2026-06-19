@@ -115,13 +115,14 @@ def add_check(id):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         h1_tag = soup.find('h1')
-        h1 = h1_tag.text if h1_tag else ''
+        h1 = str(h1_tag.text).strip() if h1_tag else ''
 
         title_tag = soup.find('title')
-        title = title_tag.text.split() if title_tag else ''
+        title = str(title_tag.text).strip() if title_tag else ''
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
-        description = desc_tag.get('content', '').strip() if desc_tag else ''
+        description = desc_tag.get('content', '') if desc_tag else ''
+        description = str(description).strip()
 
         repo.execute(
             "INSERT INTO url_checks "
