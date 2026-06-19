@@ -118,10 +118,10 @@ def add_check(id):
         h1 = h1_tag.text if h1_tag else ''
 
         title_tag = soup.find('title')
-        title = title_tag.text if title_tag else ''
+        title = title_tag.text.split() if title_tag else ''
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
-        description = desc_tag.get('content', '') if desc_tag else ''
+        description = desc_tag.get('content', '').strip() if desc_tag else ''
 
         repo.execute(
             "INSERT INTO url_checks "
