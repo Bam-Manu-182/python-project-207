@@ -34,7 +34,10 @@ def add_url():
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     repo = conn.cursor()
 
-    repo.execute("SELECT id FROM urls WHERE name = %s;", (normalized_url,))
+    repo.execute(
+        "SELECT id FROM urls WHERE name = %s;",
+        (normalized_url,)
+    )
     existing = repo.fetchone()
 
     if existing:
@@ -48,7 +51,7 @@ def add_url():
         )
         url_id = repo.fetchone()[0]
         conn.commit()
-        flash('La página se agregó correctamente')
+        flash('Página agregada con éxito')
 
     repo.close()
     conn.close()
@@ -60,7 +63,10 @@ def show_url(id):
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     repo = conn.cursor()
 
-    repo.execute("SELECT id, name, created_at FROM urls WHERE id = %s;", (id,))
+    repo.execute(
+        "SELECT id, name, created_at FROM urls WHERE id = %s;",
+        (id,)
+    )
     url = repo.fetchone()
 
     repo.execute(
@@ -124,10 +130,10 @@ def add_check(id):
             (id, status_code, h1, title, description, datetime.now())
         )
         conn.commit()
-        flash('La página fue verificada correctamente')
+        flash('Página verificada con éxito')
 
     except requests.RequestException:
-        flash('Ocurrió un error durante la verificación')
+        flash('Ocurrió un error al hacer la verificación.')
 
     repo.close()
     conn.close()
