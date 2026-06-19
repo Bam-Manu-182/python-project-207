@@ -51,7 +51,7 @@ def add_url():
         )
         url_id = repo.fetchone()[0]
         conn.commit()
-        flash('Página agregada con éxito')
+        flash('La página se agregó correctamente')
 
     repo.close()
     conn.close()
@@ -130,7 +130,7 @@ def add_check(id):
             (id, status_code, h1, title, description, datetime.now())
         )
         conn.commit()
-        flash('Página verificada con éxito')
+        flash('La página se verificó correctamente')
 
     except requests.RequestException:
         flash('Ocurrió un error al hacer la verificación.')
