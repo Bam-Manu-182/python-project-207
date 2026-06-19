@@ -130,7 +130,7 @@ def add_check(id):
             (id, status_code, h1, title, description, datetime.now())
         )
         conn.commit()
-        flash('La página se verificó correctamente')
+        flash('La página fue verificada correctamente')
 
     except requests.RequestException:
         flash('Ocurrió un error al hacer la verificación.')
