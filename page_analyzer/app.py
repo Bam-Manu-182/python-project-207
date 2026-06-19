@@ -100,7 +100,7 @@ def add_check(id):
     url_data = repo.fetchone()
 
     try:
-        response = requests.get(url_data[0])
+        response = requests.get(url_data[0], timeout=5)
         response.raise_for_status()
         status_code = response.status_code
 
