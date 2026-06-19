@@ -7,33 +7,34 @@
 </head>
 <body>
 
-    {% for message in get_flashed_messages() %}
-        <p style="color: blue;">{{ message }}</p>
-    {% endfor %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: blue;">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
     <h1>Sitio: {{ url[1] }}</h1>
 
     <table border="1">
-        <tbody>
-            <tr>
-                <th>ID</th>
-                <td>{{ url[0] }}</td>
-            </tr>
-            <tr>
-                <th>Nombre</th>
-                <td>{{ url[1] }}</td>
-            </tr>
-            <tr>
-                <th>Fecha de creación</th>
-                <td>{{ url[2] }}</td>
-            </tr>
-        </tbody>
+        <tr>
+            <th>ID</th>
+            <td>{{ url[0] }}</td>
+        </tr>
+        <tr>
+            <th>Nombre</th>
+            <td>{{ url[1] }}</td>
+        </tr>
+        <tr>
+            <th>Fecha de creación</th>
+            <td>{{ url[2] }}</td>
+        </tr>
     </table>
 
-    <br>
     <h2>Chequeos</h2>
 
-    <form action="/urls/{{ url[0] }}/checks" method="POST">
+    <form action="/urls/{{ url[0] }}/checks" methods="POST" method="post">
         <button type="submit">Iniciar chequeo</button>
     </form>
 
@@ -53,7 +54,7 @@
             {% for check in checks %}
             <tr>
                 <td>{{ check[0] }}</td>
-                <td>{{ check[2] or '' }}</td>
+                <td>{{ check[2] }}</td>
                 <td>{{ check[3] or '' }}</td>
                 <td>{{ check[4] or '' }}</td>
                 <td>{{ check[5] or '' }}</td>

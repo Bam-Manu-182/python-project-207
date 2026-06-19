@@ -2,6 +2,7 @@ import os
 import psycopg2
 import validators
 import requests
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import datetime
@@ -41,7 +42,8 @@ def add_url():
         url_id = existing[0]
     else:
         repo.execute(
-            "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id;",
+            "INSERT INTO urls (name, created_at) "
+            "VALUES (%s, %s) RETURNING id;",
             (normalized_url, datetime.now())
         )
         url_id = repo.fetchone()[0]
@@ -104,10 +106,22 @@ def add_check(id):
         response.raise_for_status()
         status_code = response.status_code
 
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        h1_tag = soup.find('h1')
+        h1 = h1_tag.text if h1_tag else ''
+
+        title_tag = soup.find('title')
+        title = title_tag.text if title_tag else ''
+
+        desc_tag = soup.find('meta', attrs={'name': 'description'})
+        description = desc_tag.get('content', '') if desc_tag else ''
+
         repo.execute(
-            "INSERT INTO url_checks (url_id, status_code, created_at) "
-            "VALUES (%s, %s, %s);",
-            (id, status_code, datetime.now())
+            "INSERT INTO url_checks "
+            "(url_id, status_code, h1, title, description, created_at) "
+            "VALUES (%s, %s, %s, %s, %s, %s);",
+            (id, status_code, h1, title, description, datetime.now())
         )
         conn.commit()
         flash('Página verificada con éxito')

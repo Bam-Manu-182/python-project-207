@@ -1,4 +1,7 @@
 __pycache__/
+*.pyc
 .env
 .venv/
 uv.lock
+.vscode/
+.DS_Store
