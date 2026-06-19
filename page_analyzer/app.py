@@ -1,6 +1,7 @@
 import os
 import psycopg2
 import validators
+import requests
 from urllib.parse import urlparse
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import datetime
@@ -78,10 +79,10 @@ def list_urls():
     repo = conn.cursor()
 
     repo.execute(
-        "SELECT urls.id, urls.name, urls.created_at, "
-        "MAX(url_checks.created_at) AS last_check "
+        "SELECT DISTINCT ON (urls.id) urls.id, urls.name, "
+        "url_checks.created_at, url_checks.status_code "
         "FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id "
-        "GROUP BY urls.id ORDER BY urls.id DESC;"
+        "ORDER BY urls.id DESC, url_checks.id DESC;"
     )
     urls = repo.fetchall()
 
@@ -95,13 +96,25 @@ def add_check(id):
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     repo = conn.cursor()
 
-    repo.execute(
-        "INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s);",
-        (id, datetime.now())
-    )
-    conn.commit()
+    repo.execute("SELECT name FROM urls WHERE id = %s;", (id,))
+    url_data = repo.fetchone()
+
+    try:
+        response = requests.get(url_data[0])
+        response.raise_for_status()
+        status_code = response.status_code
+
+        repo.execute(
+            "INSERT INTO url_checks (url_id, status_code, created_at) "
+            "VALUES (%s, %s, %s);",
+            (id, status_code, datetime.now())
+        )
+        conn.commit()
+        flash('Página verificada con éxito')
+
+    except requests.RequestException:
+        flash('Ocurrió un error al hacer la verificación.')
 
     repo.close()
     conn.close()
-    flash('Página verificada con éxito')
     return redirect(url_for('show_url', id=id))
