@@ -124,19 +124,19 @@ def add_check(id):
 
         h1_tag = soup.find('h1')
         h1 = str(h1_tag.text).strip() if h1_tag else ''
-        if len(h1) > 255:
-            h1 = h1[:252] + '...'
+        if len(h1) > 250:
+            h1 = h1[:247] + '...'
 
         title_tag = soup.find('title')
         title = str(title_tag.text).strip() if title_tag else ''
-        if len(title) > 255:
-            title = title[:252] + '...'
+        if len(title) > 250:
+            title = title[:247] + '...'
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         description = desc_tag.get('content', '') if desc_tag else ''
         description = str(description).strip()
-        if len(description) > 255:
-            description = description[:252] + '...'
+        if len(description) > 250:
+            description = description[:247] + '...'
 
         repo.execute(
             "INSERT INTO url_checks "
