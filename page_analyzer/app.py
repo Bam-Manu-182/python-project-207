@@ -74,7 +74,22 @@ def show_url(id):
         "FROM url_checks WHERE url_id = %s ORDER BY id DESC;",
         (id,)
     )
-    checks = repo.fetchall()
+    checks_raw = repo.fetchall()
+
+    checks = []
+    for row in checks_raw:
+        h1 = row[3] if row[3] else ''
+        title = row[4] if row[4] else ''
+        desc = row[5] if row[5] else ''
+
+        if len(h1) > 250:
+            h1 = (h1[:250] + '...').strip()
+        if len(title) > 250:
+            title = (title[:250] + '...').strip()
+        if len(desc) > 250:
+            desc = (desc[:250] + '...').strip()
+
+        checks.append((row[0], row[1], row[2], h1, title, desc, row[6]))
 
     repo.close()
     conn.close()
