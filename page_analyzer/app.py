@@ -67,7 +67,18 @@ def show_url(id):
         "SELECT id, name, created_at FROM urls WHERE id = %s;",
         (id,)
     )
-    url = repo.fetchone()
+    url_raw = repo.fetchone()
+
+    if not url_raw:
+        repo.close()
+        conn.close()
+        return redirect(url_for('list_urls'))
+
+    url = list(url_raw)
+    url_name = str(url[1]).strip()
+
+    if len(url_name) > 255:
+        url[1] = url_name[:252] + '...'
 
     repo.execute(
         "SELECT id, url_id, status_code, h1, title, description, created_at "
