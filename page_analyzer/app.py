@@ -41,7 +41,7 @@ def add_url():
         return redirect(url_for('index'))
 
     parsed = urlparse(url_input)
-    normalized_url = f"{parsed.scheme}://{parsed.netloc}"
+    normalized_url = f"{parsed.scheme}://{parsed.netloc}".lower()
 
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     repo = conn.cursor()
@@ -153,14 +153,17 @@ def add_check(id):
         soup = BeautifulSoup(response.text, 'html.parser')
 
         h1_tag = soup.find('h1')
-        h1 = str(h1_tag.text).strip() if h1_tag else ''
+        raw_h1 = h1_tag.text if h1_tag else ''
 
         title_tag = soup.find('title')
-        title = str(title_tag.text).strip() if title_tag else ''
+        raw_title = title_tag.text if title_tag else ''
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
-        description = desc_tag.get('content', '') if desc_tag else ''
-        description = str(description).strip()
+        raw_desc = desc_tag.get('content', '') if desc_tag else ''
+
+        h1 = truncate_text(raw_h1, limit=50)
+        title = truncate_text(raw_title, limit=50)
+        description = truncate_text(raw_desc, limit=50)
 
         repo.execute(
             "INSERT INTO url_checks "
