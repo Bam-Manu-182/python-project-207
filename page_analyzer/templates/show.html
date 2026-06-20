@@ -66,25 +66,14 @@
                     <td>{{ check[0] }}</td>
                     <td>{{ check[2] }}</td>
                     <td>
-                        {% if check[3] and check[3]|length > 250 %}
-                        {{ check[3][:250].strip() }}...
-                    {% else %}
-                        {{ check[3] or '' }}
-                    {% endif %}
+                        {{ check[3]|truncate(253, True, '...') if check[3] }}
                     </td>
                     <td>
-                        {% if check[4] and check[4]|length > 250 %}
-                            {{ check[4][:250].strip() }}...
-                        {% else %}
-                            {{ check[4] or '' }}
-                        {% endif %}
+                        {{ check[4]|truncate(253, True, '...') if check[4] }}
                     </td>
                     <td>
-                        {% if check[5] and check[5]|length > 250 %}
-                            {{ check[5][:250].strip() }}...
-                        {% else %}
-                            {{ check[5] or '' }}
-                        {% endif %}
+                        {{ check[5]|truncate(253, True, '...') if check[5] }}
+                    </td>
                     </td>
                     <td>{{ check[6] }}</td>
                 </tr>
