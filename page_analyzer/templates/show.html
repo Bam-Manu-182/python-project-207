@@ -66,15 +66,15 @@
                     <td>{{ check[0] }}</td>
                     <td>{{ check[2] }}</td>
                     <td>
-                        {{ check[3][:250] if check[3] else '-' }}
+                        {{ check[3][:255] if check[3] else '-' }}
                         {{ '...' if check[3] and check[3] | length > 255 }}
                     </td>
                     <td>
-                        {{ check[4][:250] if check[4] else '-' }}
+                        {{ check[4][:255] if check[4] else '-' }}
                         {{ '...' if check[4] and check[4] | length > 255 }}
                     </td>
                     <td>
-                        {{ check[5][:250] if check[5] else '-' }}
+                        {{ check[5][:255] if check[5] else '-' }}
                         {{ '...' if check[5] and check[5] | length > 255 }}
                     </td>
                     </td>
