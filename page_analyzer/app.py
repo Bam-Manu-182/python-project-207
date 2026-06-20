@@ -38,7 +38,7 @@ def add_url():
 
     if not validators.url(url_input) or len(url_input) > 255:
         flash('URL incorrecta')
-        return redirect(url_for('index'))
+        return render_template('index.html'), 422
 
     parsed = urlparse(url_input)
     normalized_url = f"{parsed.scheme}://{parsed.netloc}".lower()
