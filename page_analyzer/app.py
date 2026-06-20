@@ -11,6 +11,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def truncate_text(text, limit=255):
+    if not text:
+        return ''
+
+    string_text = " ".join(str(text).split()).strip()
+
+    if len(string_text) > limit:
+        return string_text[:limit].strip() + '...'
+
+    return string_text
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secreto')
 
