@@ -78,9 +78,16 @@ def show_url(id):
 
     checks = []
     for row in checks_raw:
-        h1 = row[3] if row[3] else ''
-        title = row[4] if row[4] else ''
-        desc = row[5] if row[5] else ''
+        h1 = str(row[3]).strip() if row[3] else ''
+        title = str(row[4]).strip() if row[4] else ''
+        desc = str(row[5]).strip() if row[5] else ''
+
+        if len(h1) > 255:
+            h1 = h1[:252] + '...'
+        if len(title) > 255:
+            title = title[:252] + '...'
+        if len(desc) > 255:
+            desc = desc[:252] + '...'
 
         checks.append((row[0], row[1], row[2], h1, title, desc, row[6]))
 
@@ -124,19 +131,13 @@ def add_check(id):
 
         h1_tag = soup.find('h1')
         h1 = str(h1_tag.text).strip() if h1_tag else ''
-        if len(h1) > 250:
-            h1 = h1[:247] + '...'
 
         title_tag = soup.find('title')
         title = str(title_tag.text).strip() if title_tag else ''
-        if len(title) > 250:
-            title = title[:247] + '...'
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         description = desc_tag.get('content', '') if desc_tag else ''
         description = str(description).strip()
-        if len(description) > 250:
-            description = description[:247] + '...'
 
         repo.execute(
             "INSERT INTO url_checks "
