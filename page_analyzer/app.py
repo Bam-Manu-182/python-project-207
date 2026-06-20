@@ -84,11 +84,11 @@ def show_url(id):
         desc = row[5] if row[5] else ''
 
         if len(h1) > 250:
-            h1 = h1[:250].strip() + '...'
+            h1 = h1[:250] + '...'
         if len(title) > 250:
-            title = title[:250].strip() + '...'
+            title = title[:250] + '...'
         if len(desc) > 250:
-            desc = desc[:250].strip() + '...'
+            desc = desc[:250] + '...'
 
         checks.append((row[0], row[1], row[2], h1, title, desc, row[6]))
 
