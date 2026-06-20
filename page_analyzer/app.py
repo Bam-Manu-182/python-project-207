@@ -175,7 +175,7 @@ def add_check(id):
         flash('La página fue verificada correctamente')
 
     except requests.RequestException:
-        flash('Ocurrió un error al hacer la verificación.')
+        flash('Ocurrió un error durante la verificación')
 
     repo.close()
     conn.close()
