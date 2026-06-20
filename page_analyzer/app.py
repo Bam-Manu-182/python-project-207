@@ -74,7 +74,6 @@ def show_url(id):
         "FROM url_checks WHERE url_id = %s ORDER BY id DESC;",
         (id,)
     )
-
     checks_raw = repo.fetchall()
 
     checks = []
