@@ -37,7 +37,7 @@ def add_url():
     url_input = request.form.get('url')
 
     if not validators.url(url_input) or len(url_input) > 255:
-        flash('URL incorrecta')
+        flash('URL no válido')
         return render_template('index.html'), 422
 
     parsed = urlparse(url_input)
