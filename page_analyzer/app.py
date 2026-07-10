@@ -14,7 +14,8 @@ load_dotenv()
 def get_database_connection():
     return psycopg2.connect(os.getenv('DATABASE_URL'))
 
-def truncate_text(text, limit=255):
+def truncate_text(text, limit=252):
+
     if not text:
         return ''
 
@@ -39,7 +40,7 @@ def index():
 def add_url():
     url_input = request.form.get('url')
 
-    if not validators.url(url_input) or len(url_input) > 255:
+    if not validators.url(url_input) or len(url_input) > 252:
         flash('URL no válido')
         return render_template('index.html'), 422
 
@@ -92,7 +93,7 @@ def show_url(id):
     url = list(url_raw)
     url_name = str(url[1]).strip()
 
-    if len(url_name) > 255:
+    if len(url_name) > 252:
         url[1] = url_name[:252] + '...'
 
     repo.execute(
@@ -164,9 +165,9 @@ def add_check(id):
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
 
-        h1 = truncate_text(raw_h1, limit=255)
-        title = truncate_text(raw_title, limit=255)
-        description = truncate_text(raw_desc, limit=255)
+        h1 = truncate_text(raw_h1, limit=252)
+        title = truncate_text(raw_title, limit=252)
+        description = truncate_text(raw_desc, limit=252)
 
 
         repo.execute(
