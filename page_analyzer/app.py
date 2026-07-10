@@ -14,7 +14,25 @@ load_dotenv()
 def get_database_connection():
     return psycopg2.connect(os.getenv('DATABASE_URL'))
 
-def truncate_text(text, limit=252):
+def truncate_text(text, limit=255):
+
+    if not text:
+        return ""
+
+    string_text = " ".join(str(text).split()).strip()
+
+    if len(string_text) <= limit:
+        return string_text
+
+    text_trunc = string_text[:limit - 3]
+    espacios = text_trunc.rfind(" ")
+
+    if espacios > 0:
+        text_trunc = text_trunc[:espacios]
+
+    return text_trunc + "..."
+
+#def truncate_text(text, limit=255):
 
     if not text:
         return ""
@@ -25,7 +43,6 @@ def truncate_text(text, limit=252):
         return string_text[:limit] + "..."
 
     return string_text
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secreto')
@@ -165,9 +182,9 @@ def add_check(id):
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
 
-        h1 = truncate_text(raw_h1, limit=85)
-        title = truncate_text(raw_title, limit=85)
-        description = truncate_text(raw_desc, limit=85)
+        h1 = truncate_text(raw_h1, limit=255)
+        title = truncate_text(raw_title, limit=255)
+        description = truncate_text(raw_desc, limit=255)
 
 
         repo.execute(
