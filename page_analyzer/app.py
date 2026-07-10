@@ -164,9 +164,10 @@ def add_check(id):
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
 
-        h1 = truncate_text(raw_h1, limit=80)
-        title = truncate_text(raw_title, limit=80)
-        description = truncate_text(raw_desc, limit=80)
+        h1 = truncate_text(raw_h1, limit=252)
+        title = truncate_text(raw_title, limit=252)
+        description = truncate_text(raw_desc, limit=252)
+
 
         repo.execute(
             "INSERT INTO url_checks "
