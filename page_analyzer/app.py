@@ -21,7 +21,7 @@ def truncate_text(text, limit=255):
     string_text = " ".join(str(text).split()).strip()
 
     if len(string_text) > limit:
-        return string_text[:limit - 3].strip() + '...'
+        return string_text[:limit - 3].rstrip() + '...'
 
     return string_text
 
