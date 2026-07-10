@@ -14,7 +14,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">Analizador de Páginas</a>
             <div class="navbar-nav">
-                <a class="nav-link" href="/urls">Sitios</a>
+                <a class="nav-link" href="{{ url_for('list_urls') }}">Sitios</a>
             </div>
         </div>
     </nav>
@@ -27,7 +27,7 @@
         <h1>Analizador de Páginas</h1>
         <p>Verifica el estado SEO de una página web</p>
 
-        <form action="/urls" method="POST" class="mt-4">
+        <form action="{{ url_for('add_url') }}" method="POST" class="mt-4">
             <div class="mb-3">
                 <input
                     type="text"

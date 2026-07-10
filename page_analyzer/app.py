@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def get_database_connection():
+    return psycopg2.connect(os.getenv('DATABASE_URL'))
+
 def truncate_text(text, limit=255):
     if not text:
         return ''
@@ -43,7 +46,7 @@ def add_url():
     parsed = urlparse(url_input)
     normalized_url = f"{parsed.scheme}://{parsed.netloc}".lower()
 
-    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+    conn = get_database_connection()
     repo = conn.cursor()
 
     repo.execute(
@@ -72,7 +75,7 @@ def add_url():
 
 @app.route('/urls/<int:id>')
 def show_url(id):
-    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+    conn = get_database_connection()
     repo = conn.cursor()
 
     repo.execute(
@@ -121,7 +124,7 @@ def show_url(id):
 
 @app.route('/urls')
 def list_urls():
-    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+    conn = get_database_connection()
     repo = conn.cursor()
 
     repo.execute(
@@ -139,7 +142,7 @@ def list_urls():
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def add_check(id):
-    conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+    conn = get_database_connection()
     repo = conn.cursor()
 
     repo.execute("SELECT name FROM urls WHERE id = %s;", (id,))
@@ -161,9 +164,9 @@ def add_check(id):
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
 
-        h1 = truncate_text(raw_h1, limit=50)
-        title = truncate_text(raw_title, limit=50)
-        description = truncate_text(raw_desc, limit=50)
+        h1 = truncate_text(raw_h1, limit=255)
+        title = truncate_text(raw_title, limit=255)
+        description = truncate_text(raw_desc, limit=255)
 
         repo.execute(
             "INSERT INTO url_checks "

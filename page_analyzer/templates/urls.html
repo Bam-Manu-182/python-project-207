@@ -12,9 +12,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">Analizador de Páginas</a>
+            <a class="navbar-brand" href="{{ url_for('index') }}">Analizador de Páginas</a>
             <div class="navbar-nav">
-                <a class="nav-link active" href="/urls">Sitios</a>
+                <a class="nav-link active" href="{{ url_for('list_urls') }}">Sitios</a>
             </div>
         </div>
     </nav>
@@ -36,7 +36,7 @@
                 <tr>
                     <td>{{ url[0] }}</td>
                     <td>
-                        <a href="/urls/{{ url[0] }}">{{ url[1] }}</a>
+                        <a href="{{ url_for('show_url', id=url[0]) }}">{{ url[1] }}</a>
                     </td>
                     <td>{{ url[2] or '' }}</td>
                     <td>{{ url[3] or '' }}</td>
@@ -46,7 +46,7 @@
         </table>
 
         <br>
-        <a href="/" class="btn btn-secondary">Volver al inicio</a>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver al inicio</a>
     </div>
 
 </body>
