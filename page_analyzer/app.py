@@ -23,7 +23,7 @@ def truncate_text(text, limit=255):
     string_text = " ".join(str(text).split()).strip()
 
     if len(string_text) > limit:
-        return string_text[:limit] + "..."
+        return string_text[:limit - 3] + "..."
 
     return string_text
 
@@ -165,9 +165,9 @@ def add_check(id):
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
 
-        h1 = truncate_text(raw_h1, limit=90)
-        title = truncate_text(raw_title, limit=90)
-        description = truncate_text(raw_desc, limit=90)
+        h1 = truncate_text(raw_h1, limit=255)
+        title = truncate_text(raw_title, limit=255)
+        description = truncate_text(raw_desc, limit=255)
 
 
         repo.execute(
