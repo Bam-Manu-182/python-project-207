@@ -104,6 +104,7 @@ def show_url(id):
 
     checks = []
     for row in checks_raw:
+        """
         h1 = str(row[3]).strip() if row[3] else ''
         title = str(row[4]).strip() if row[4] else ''
         desc = str(row[5]).strip() if row[5] else ''
@@ -114,6 +115,10 @@ def show_url(id):
             title = truncate_text(title.strip(), limit=255)
         if len(desc) <= 255:
             desc = truncate_text(desc.strip(), limit=255)
+        """
+        h1 = truncate_text(str(row[3]).strip(), limit=200) if row[3] else ''
+        title = truncate_text(str(row[4]).strip(), limit=200) if row[4] else ''
+        desc = truncate_text(str(row[5]).strip(), limit=200) if row[5] else ''
 
         checks.append((row[0], row[1], row[2], h1, title, desc, row[6]))
 
