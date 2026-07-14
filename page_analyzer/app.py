@@ -108,12 +108,12 @@ def show_url(id):
         title = str(row[4]).strip() if row[4] else ''
         desc = str(row[5]).strip() if row[5] else ''
 
-        if len(h1) > 255:
-            h1 = truncate_text(h1, limit=255)
-        if len(title) > 255:
-            title = truncate_text(title, limit=255)
-        if len(desc) > 255:
-            desc = truncate_text(desc, limit=255)
+        if len(h1) <= 255:
+            h1 = truncate_text(h1.strip(), limit=255)
+        if len(title) <= 255:
+            title = truncate_text(title.strip(), limit=255)
+        if len(desc) <= 255:
+            desc = truncate_text(desc.strip(), limit=255)
 
         checks.append((row[0], row[1], row[2], h1, title, desc, row[6]))
 
