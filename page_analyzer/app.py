@@ -104,18 +104,6 @@ def show_url(id):
 
     checks = []
     for row in checks_raw:
-        """
-        h1 = str(row[3]).strip() if row[3] else ''
-        title = str(row[4]).strip() if row[4] else ''
-        desc = str(row[5]).strip() if row[5] else ''
-
-        if len(h1) <= 255:
-            h1 = truncate_text(h1.strip(), limit=255)
-        if len(title) <= 255:
-            title = truncate_text(title.strip(), limit=255)
-        if len(desc) <= 255:
-            desc = truncate_text(desc.strip(), limit=255)
-        """
         h1 = truncate_text(str(row[3]).strip(), limit=200) if row[3] else ''
         title = truncate_text(str(row[4]).strip(), limit=200) if row[4] else ''
         desc = truncate_text(str(row[5]).strip(), limit=200) if row[5] else ''
@@ -168,8 +156,6 @@ def add_check(id):
 
         desc_tag = soup.find('meta', attrs={'name': 'description'})
         raw_desc = desc_tag.get('content', '') if desc_tag else ''
-
-        print(f"¿¿¿¿¿ Raw h1: {raw_h1}, Raw title: {raw_title}, Raw description: {raw_desc} ¿¿¿¿¿")
 
         h1 = truncate_text(raw_h1, limit=255)
         title = truncate_text(raw_title, limit=255)
