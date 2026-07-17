@@ -15,17 +15,17 @@ El proyecto sigue una arquitectura basada en el patrón MVC (Modelo-Vista-Contro
 Procesos Principales del Flujo de Trabajo
 
 1. Registro de URL:
-   * El usuario ingresa una dirección en la interfaz principal.
-   * El sistema valida la estructura de la URL mediante expresiones regulares y validadores nativos.
-   * Se ejecuta un proceso de normalización: se extraen únicamente el esquema (`scheme`), descartando rutas, parámetros o subcarpetas (ej. `https://sub.ejemplo.com/ruta?id=1` se convierte en `https://sub.ejemplo.com`).
-   * Se verifica la existencia del dominio en la base de datos. Si ya existe, se redirige al usuario al perfil del sitio existente alertando la duplicidad. Si es nuevo, se según los requisitos del sistema.
+El usuario ingresa una dirección en la interfaz principal.
+El sistema valida la estructura de la URL mediante expresiones regulares y validadores nativos.
+Se ejecuta un proceso de normalización: se extraen únicamente el esquema (`scheme`), descartando rutas, parámetros o subcarpetas (ej. `https://sub.ejemplo.com/ruta?id=1` se convierte en `https://sub.ejemplo.com`).
+Se verifica la existencia del dominio en la base de datos. Si ya existe, se redirige al usuario al perfil del sitio existente alertando la duplicidad. Si es nuevo, se según los requisitos del sistema.
 
 2. Chequeo SEO (Verificación):
-   * Al accionar "Iniciar verificación", el servidor realiza una petición `GET` utilizando un cliente HTTP con tiempos de espera (`timeout`) controlados.
-   * Si la respuesta es exitosa (`200 OK`), el documento HTML es transferido al motor de parsing.
-   * Se extraen los textos contenidos en `<h1>`, `<title>` y `<meta name="description">`.
-   * Si alguno de los campos de texto recuperados excede los límites visuales o de base de datos, el sistema aplica un truncamiento controlado por backend para añadir el sufijo de elipsis (`...`) garantizando la integridad de la interfaz de usuario.
-   * Se persiste el chequeo con su respectiva marca de tiempo (`created_at`).
+Al accionar "Iniciar verificación", el servidor realiza una petición `GET` utilizando un cliente HTTP con tiempos de espera (`timeout`) controlados.
+Si la respuesta es exitosa (`200 OK`), el documento HTML es transferido al motor de parsing.
+Se extraen los textos contenidos en `<h1>`, `<title>` y `<meta name="description">`.
+Si alguno de los campos de texto recuperados excede los límites visuales o de base de datos, el sistema aplica un truncamiento controlado por backend para añadir el sufijo de elipsis (`...`) garantizando la integridad de la interfaz de usuario.
+Se persiste el chequeo con su respectiva marca de tiempo (`created_at`).
 
 Requisitos del Sistema y Entorno
 El software ha sido desarrollado y probado bajo las especificaciones para asegurar su portabilidad y correcto funcionamiento en despliegues remotos:
